@@ -8,6 +8,8 @@ from tinydb import TinyDB, Query
 from typing import List
 from strands.vended_tools import make_a2a_client
 # TODO: Step 1 - Import create_harness from strands_harness
+from strands_harness import create_harness
+from strands_harness import SessionConfig
 
 app = FastAPI(title="D&D Game Master API (Strands harness)")
 app.add_middleware(
@@ -45,13 +47,20 @@ a2a_client = make_a2a_client(allowed_endpoints={
     "http://127.0.0.1:8001": None,  # Character Agent
 })
 
+
 agent = create_harness(
     # TODO: Step 1 - Pass the INSTRUCTIONS to the harness
+    instructions=INSTRUCTIONS,
     # TODO: Step 2 - Add the dice MCP server {"dice": {"url": "http://127.0.0.1:8002/mcp"}} to mcp_servers
+    mcp_servers={"dice": {"url": "http://localhost:8002/mcp"}},
     # TODO: Step 3 - Add the a2a_client tool to the harness
+    tools=[a2a_client],
     # TODO: Step 4 - Disable the built-in tools
+    builtin_tools=[],
     # TODO: Step 5 - Name the session "dnd-campaign"
+    session={"id": "dnd-campaign"},
     # TODO: Step 6 - Force the response to use the StoryOutput model
+    structured_output_model=StoryOutput,
 )
 
 @app.get("/health")
